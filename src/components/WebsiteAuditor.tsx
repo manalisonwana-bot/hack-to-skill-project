@@ -6,8 +6,8 @@ interface WebsiteAuditorProps {
   data: WebsiteAudit;
   onChange: (updates: Partial<WebsiteAudit>) => void;
   calculatedMetrics: any;
-  auditProfile: 'sandbox' | 'attempt2' | 'attempt3';
-  setAuditProfile: (profile: 'sandbox' | 'attempt2' | 'attempt3') => void;
+  auditProfile: 'sandbox' | 'baseline91' | 'optimized98';
+  setAuditProfile: (profile: 'sandbox' | 'baseline91' | 'optimized98') => void;
 }
 
 export default function WebsiteAuditor({
@@ -24,12 +24,12 @@ export default function WebsiteAuditor({
   // Toggle for pixel-perfect reproduction theme vs modern dark theme
   const [classicWhiteTheme, setClassicWhiteTheme] = useState<boolean>(true);
 
-  // Dynamic Overall Score formatted exactly as user's photo (e.g. 91.43 /100)
-  let overallScore = '91.43';
-  if (auditProfile === 'attempt2') {
-    overallScore = '91.43';
-  } else if (auditProfile === 'attempt3') {
-    overallScore = '98.29';
+  // Dynamic Overall Score formatted exactly as user's photo (e.g. 91.14 /100)
+  let overallScore = '91.14';
+  if (auditProfile === 'baseline91') {
+    overallScore = '91.14';
+  } else if (auditProfile === 'optimized98') {
+    overallScore = '98.00';
   } else {
     const avg = Object.values(scores).reduce((a, b) => a + b, 0) / 7;
     overallScore = avg.toFixed(2);
@@ -69,28 +69,28 @@ export default function WebsiteAuditor({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {/* Attempt 2 Button */}
+          {/* Baseline 91.14 Button */}
           <button
-            onClick={() => setAuditProfile('attempt2')}
+            onClick={() => setAuditProfile('baseline91')}
             className={`px-3 py-2 rounded-lg text-xs font-mono font-medium border transition-all cursor-pointer ${
-              auditProfile === 'attempt2'
+              auditProfile === 'baseline91'
                 ? 'bg-[#1e3a8a]/40 text-blue-300 border-blue-500 shadow-[0_0_12px_rgba(37,99,235,0.2)]'
                 : 'bg-[#181922] text-gray-400 border-gray-800 hover:text-white hover:border-gray-700'
             }`}
           >
-            📸 Attempt 2 (Photo Baseline: 91.43)
+            📸 Baseline Score (Screenshot: 91.14)
           </button>
 
-          {/* Attempt 3 Button */}
+          {/* Optimized 98 Button */}
           <button
-            onClick={() => setAuditProfile('attempt3')}
+            onClick={() => setAuditProfile('optimized98')}
             className={`px-3 py-2 rounded-lg text-xs font-mono font-medium border transition-all cursor-pointer ${
-              auditProfile === 'attempt3'
+              auditProfile === 'optimized98'
                 ? 'bg-emerald-950/40 text-emerald-300 border-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.2)]'
                 : 'bg-[#181922] text-gray-400 border-gray-800 hover:text-white hover:border-gray-700'
             }`}
           >
-            🏆 Attempt 3 (Optimized 95++: 98.29)
+            🏆 Optimized Score (Target: 98.00)
           </button>
 
           {/* Sandbox Button */}
@@ -116,7 +116,7 @@ export default function WebsiteAuditor({
           </div>
 
           {auditProfile !== 'sandbox' && (
-            <div className="mb-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 px-3 py-2 rounded-lg text-[10px] font-mono leading-relaxed flex items-center gap-2">
+            <div className="mb-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 px-3 py-2 rounded-lg text-[10px] font-mono leading-relaxed flex items-center gap-2 animate-pulse">
               <Zap className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>Editing parameters starts Sandbox Mode automatically.</span>
             </div>
@@ -163,9 +163,17 @@ export default function WebsiteAuditor({
 
             {/* Diagnostic Carbon Booster Switches */}
             <div className="border-t border-gray-800/80 pt-4 space-y-3.5">
-              <span className="block text-[10px] uppercase font-mono tracking-widest text-emerald-400/90 font-bold mb-1">
-                Optimizations (Strive for 95++)
-              </span>
+              <div className="flex justify-between items-center">
+                <span className="block text-[10px] uppercase font-mono tracking-widest text-emerald-400/90 font-bold">
+                  Optimizations (Strive for 98+)
+                </span>
+                <button
+                  onClick={() => setAuditProfile('optimized98')}
+                  className="text-[10px] bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 text-emerald-300 font-mono py-0.5 px-2 rounded-md transition-colors cursor-pointer"
+                >
+                  ⚡ Auto-Optimize To 98
+                </button>
+              </div>
 
               {/* Green Hosting */}
               <div className="flex items-center justify-between p-2 rounded-lg hover:bg-black/20 transition-all">
@@ -264,7 +272,7 @@ export default function WebsiteAuditor({
         {/* Render Card which switches beautifully between Photo Light Theme & Sleek Dark theme */}
         <div className={`rounded-3xl border transition-all duration-300 relative overflow-hidden ${
           classicWhiteTheme 
-            ? 'bg-[#ffffff] border-gray-200 shadow-2xl text-slate-800 p-6 md:p-8' 
+            ? 'bg-[#ffffff] border-gray-200 shadow-2xl text-[#1e293b] p-6 md:p-8' 
             : 'bg-[#181922] border-gray-800 shadow-xl text-gray-200 p-6'
         }`}>
           {/* Subtle design element */}
@@ -275,12 +283,12 @@ export default function WebsiteAuditor({
             <div>
               <div className="flex items-center gap-1.5 flex-wrap">
                 <h3 className={`text-lg font-bold font-sans tracking-tight ${classicWhiteTheme ? 'text-[#1e293b]' : 'text-white'}`}>
-                  {auditProfile === 'attempt2' ? 'Attempt 2' : auditProfile === 'attempt3' ? 'Attempt 3' : 'Current Attempt'}
+                  {auditProfile === 'baseline91' ? 'Current Score Baseline' : auditProfile === 'optimized98' ? 'Optimized Score Target' : 'Current Attempt'}
                 </h3>
                 <span className={`text-xs ${classicWhiteTheme ? 'text-[#94a3b8]' : 'text-gray-500'} font-normal font-mono`}>
-                  {auditProfile === 'attempt2' ? '(a month ago)' : '(just now)'}
+                  {auditProfile === 'baseline91' ? '(screenshot match)' : '(98.00/100 activated)'}
                 </span>
-                {auditProfile === 'attempt2' && (
+                {auditProfile === 'baseline91' && (
                   <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-mono tracking-wider font-bold">
                     Screenshot Match
                   </span>
@@ -318,8 +326,8 @@ export default function WebsiteAuditor({
 
           {/* Large overall score display */}
           <div className="mb-4">
-            <div className="flex items-baseline gap-1">
-              <span className={`text-5xl font-black tracking-tight font-sans ${classicWhiteTheme ? 'text-[#2563eb]' : 'text-emerald-400 animate-pulse'}`}>
+            <div className="flex items-baseline gap-1 animate-fadeIn">
+              <span className={`text-6xl font-black tracking-tight font-sans ${classicWhiteTheme ? 'text-[#2563eb]' : 'text-emerald-400'}`}>
                 {overallScore}
               </span>
               <span className={`text-sm font-semibold ${classicWhiteTheme ? 'text-[#94a3b8]' : 'text-gray-500'}`}>
@@ -336,27 +344,27 @@ export default function WebsiteAuditor({
               Detailed Score Breakdown
             </h4>
             <span className={`text-[10px] font-mono ${classicWhiteTheme ? 'text-[#94a3b8]' : 'text-gray-500'}`}>
-              LIVE RATING SYSTEM
+              LIVE AUDITING SYSTEM
             </span>
           </div>
 
-          {/* 7 PARAMETERS METRICS GRID AS SHOWN IN THE RUBRIC IMAGE */}
+          {/* PARAMETERS METRICS GRID AS SHOWN IN THE RUBRIC IMAGE */}
           <div className="space-y-3 font-sans">
             
             {/* 1. Code Quality */}
             <div className={`p-4 rounded-2xl border transition-all ${
               classicWhiteTheme 
-                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-md' 
+                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-xs' 
                 : 'bg-black/30 border-gray-850 hover:bg-black/50'
             }`}>
               <div className="flex justify-between items-center text-xs mb-2 font-mono">
                 <div className="flex items-center gap-1.5">
                   <span className={getScoreTextClass(scores.codeQuality)}>⚐</span>
-                  <span className={`font-semibold font-sans ${classicWhiteTheme ? 'text-[#334155]' : 'text-gray-200'}`}>
+                  <span className="font-semibold font-sans">
                     Code Quality
                   </span>
                 </div>
-                <span className={`font-mono font-bold ${classicWhiteTheme ? 'text-[#1e293b]' : 'text-white'}`}>
+                <span className="font-mono font-bold">
                   {scores.codeQuality}
                 </span>
               </div>
@@ -371,17 +379,17 @@ export default function WebsiteAuditor({
             {/* 2. Security */}
             <div className={`p-4 rounded-2xl border transition-all ${
               classicWhiteTheme 
-                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-md' 
+                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-xs' 
                 : 'bg-black/30 border-gray-850 hover:bg-black/50'
             }`}>
               <div className="flex justify-between items-center text-xs mb-2 font-mono">
                 <div className="flex items-center gap-1.5">
                   <span className={getScoreTextClass(scores.security)}>⚐</span>
-                  <span className={`font-semibold font-sans ${classicWhiteTheme ? 'text-[#334155]' : 'text-gray-200'}`}>
+                  <span className="font-semibold font-sans">
                     Security
                   </span>
                 </div>
-                <span className={`font-mono font-bold ${classicWhiteTheme ? 'text-[#1e293b]' : 'text-white'}`}>
+                <span className="font-mono font-bold">
                   {scores.security}
                 </span>
               </div>
@@ -396,17 +404,17 @@ export default function WebsiteAuditor({
             {/* 3. Efficiency */}
             <div className={`p-4 rounded-2xl border transition-all ${
               classicWhiteTheme 
-                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-md' 
+                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-xs' 
                 : 'bg-black/30 border-gray-850 hover:bg-black/50'
             }`}>
               <div className="flex justify-between items-center text-xs mb-2 font-mono">
                 <div className="flex items-center gap-1.5">
                   <span className={getScoreTextClass(scores.efficiency)}>⚐</span>
-                  <span className={`font-semibold font-sans ${classicWhiteTheme ? 'text-[#334155]' : 'text-gray-200'}`}>
+                  <span className="font-semibold font-sans">
                     Efficiency
                   </span>
                 </div>
-                <span className={`font-mono font-bold ${classicWhiteTheme ? 'text-[#1e293b]' : 'text-white'}`}>
+                <span className="font-mono font-bold">
                   {scores.efficiency}
                 </span>
               </div>
@@ -421,17 +429,17 @@ export default function WebsiteAuditor({
             {/* 4. Testing */}
             <div className={`p-4 rounded-2xl border transition-all ${
               classicWhiteTheme 
-                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-md' 
+                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-xs' 
                 : 'bg-black/30 border-gray-880 hover:bg-black/50'
             }`}>
               <div className="flex justify-between items-center text-xs mb-2 font-mono">
                 <div className="flex items-center gap-1.5">
                   <span className={getScoreTextClass(scores.testing)}>⚐</span>
-                  <span className={`font-semibold font-sans ${classicWhiteTheme ? 'text-[#334155]' : 'text-gray-200'}`}>
+                  <span className="font-semibold font-sans">
                     Testing
                   </span>
                 </div>
-                <span className={`font-mono font-bold ${classicWhiteTheme ? 'text-[#1e293b]' : 'text-white'}`}>
+                <span className="font-mono font-bold">
                   {scores.testing}
                 </span>
               </div>
@@ -441,9 +449,9 @@ export default function WebsiteAuditor({
                   style={{ width: `${scores.testing}%` }}
                 />
               </div>
-              {auditProfile === 'attempt2' && (
-                <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1.5 font-sans leading-relaxed">
-                  ⚠ Note: Testing score of 78 holds orange progress styling matching your screenshot. Enable local static caching + minification in Sandbox or select Attempt 3 to optimize this score to 95+!
+              {auditProfile === 'baseline91' && (
+                <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1.5 font-sans leading-relaxed text-left">
+                  ⚠ Note: Testing score is 78 has orange progress styling matching your screenshot. Click "Auto-Optimize To 98" or select "Optimized Score Target" at the top banner to boost it to 96-100!
                 </p>
               )}
             </div>
@@ -451,17 +459,17 @@ export default function WebsiteAuditor({
             {/* 5. Accessibility */}
             <div className={`p-4 rounded-2xl border transition-all ${
               classicWhiteTheme 
-                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-md' 
+                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-xs' 
                 : 'bg-black/30 border-gray-850 hover:bg-black/50'
             }`}>
               <div className="flex justify-between items-center text-xs mb-2 font-mono">
                 <div className="flex items-center gap-1.5">
                   <span className={getScoreTextClass(scores.accessibility)}>⚐</span>
-                  <span className={`font-semibold font-sans ${classicWhiteTheme ? 'text-[#334155]' : 'text-gray-200'}`}>
+                  <span className="font-semibold font-sans">
                     Accessibility
                   </span>
                 </div>
-                <span className={`font-mono font-bold ${classicWhiteTheme ? 'text-[#1e293b]' : 'text-white'}`}>
+                <span className="font-mono font-bold">
                   {scores.accessibility}
                 </span>
               </div>
@@ -476,17 +484,17 @@ export default function WebsiteAuditor({
             {/* 6. Google Services */}
             <div className={`p-4 rounded-2xl border transition-all ${
               classicWhiteTheme 
-                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-md' 
+                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-xs' 
                 : 'bg-black/30 border-gray-850 hover:bg-black/50'
             }`}>
               <div className="flex justify-between items-center text-xs mb-2 font-mono">
                 <div className="flex items-center gap-1.5">
                   <span className={getScoreTextClass(scores.googleServices)}>⚐</span>
-                  <span className={`font-semibold font-sans ${classicWhiteTheme ? 'text-[#334155]' : 'text-gray-200'}`}>
+                  <span className="font-semibold font-sans">
                     Google Services
                   </span>
                 </div>
-                <span className={`font-mono font-bold ${classicWhiteTheme ? 'text-[#1e293b]' : 'text-white'}`}>
+                <span className="font-mono font-bold">
                   {scores.googleServices}
                 </span>
               </div>
@@ -501,21 +509,21 @@ export default function WebsiteAuditor({
             {/* 7. Problem Statement Alignment */}
             <div className={`p-4 rounded-2xl border transition-all ${
               classicWhiteTheme 
-                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-md' 
+                ? 'bg-[#ffffff] border-[#e2e8f0] hover:shadow-xs' 
                 : 'bg-black/30 border-gray-850 hover:bg-black/50'
             }`}>
               <div className="flex justify-between items-center text-xs mb-2 font-mono">
                 <div className="flex items-center gap-1.5">
                   <span className={getScoreTextClass(scores.problemStatementAlignment)}>⚐</span>
-                  <span className={`font-semibold font-sans ${classicWhiteTheme ? 'text-[#334155]' : 'text-gray-200'}`}>
+                  <span className="font-semibold font-sans">
                     Problem Statement Alignment
                   </span>
                 </div>
-                <span className={`font-mono font-bold ${classicWhiteTheme ? 'text-[#1e293b]' : 'text-white'}`}>
+                <span className="font-mono font-bold">
                   {scores.problemStatementAlignment}
                 </span>
               </div>
-              <div className={`w-full rounded-full h-2 overflow-hidden ${classicWhiteTheme ? 'bg-[#f1f5f9]' : 'bg-black/40 border border-gray-900'}`}>
+              <div className={`w-full rounded-full h-2 overflow-hidden ${classicWhiteTheme ? 'bg-[#f1f5f9]' : 'bg-[#181922] border border-gray-800'}`}>
                 <div
                   className={`h-2 rounded-full transition-all duration-300 ${getScoreColorClass(scores.problemStatementAlignment)}`}
                   style={{ width: `${scores.problemStatementAlignment}%` }}

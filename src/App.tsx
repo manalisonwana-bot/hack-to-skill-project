@@ -23,7 +23,7 @@ export default function App() {
     foodWastePct: 25
   });
 
-  const [auditProfile, setAuditProfile] = useState<'sandbox' | 'attempt2' | 'attempt3'>('attempt2');
+  const [auditProfile, setAuditProfile] = useState<'sandbox' | 'baseline91' | 'optimized98'>('baseline91');
 
   const [website, setWebsite] = useState<WebsiteAudit>({
     pageWeightKb: 830,
@@ -45,12 +45,12 @@ export default function App() {
     grandTotalKg: 0,
     scores: {
       codeQuality: 84,
-      security: 95,
-      efficiency: 80,
+      security: 96,
+      efficiency: 100,
       testing: 78,
-      accessibility: 96,
-      googleServices: 100,
-      problemStatementAlignment: 98
+      accessibility: 95,
+      googleServices: 92,
+      problemStatementAlignment: 93
     }
   });
 
@@ -109,9 +109,9 @@ export default function App() {
     const highSizeOptimization = website.pageWeightKb < 250;
     const httpsSec = website.securityHttps;
 
-    if (auditProfile === 'attempt2') {
+    if (auditProfile === 'baseline91') {
       codeQuality = 84;
-    } else if (auditProfile === 'attempt3') {
+    } else if (auditProfile === 'optimized98') {
       codeQuality = 96;
     } else {
       if (website.isMinified) codeQuality += 10;
@@ -122,51 +122,63 @@ export default function App() {
     }
 
     let security = 45;
-    if (auditProfile === 'attempt2') {
-      security = 95;
-    } else if (auditProfile === 'attempt3') {
-      security = 100;
+    if (auditProfile === 'baseline91') {
+      security = 96;
+    } else if (auditProfile === 'optimized98') {
+      security = 98;
     } else {
-      security = httpsSec ? 98 : 45;
-      if (website.isCached) security += 2;
+      security = httpsSec ? 96 : 45;
+      if (website.isCached) security += 4;
       security = Math.min(security, 100);
     }
 
     let efficiency = 75;
-    if (auditProfile === 'attempt2') {
-      efficiency = 80;
-    } else if (auditProfile === 'attempt3') {
-      efficiency = 98;
+    if (auditProfile === 'baseline91') {
+      efficiency = 100;
+    } else if (auditProfile === 'optimized98') {
+      efficiency = 100;
     } else {
-      if (isGreen) efficiency += 12;
-      if (website.isCached) efficiency += 8;
+      if (isGreen) efficiency += 15;
+      if (website.isCached) efficiency += 5;
       if (computedWeightKb < 200) efficiency += 10;
       else if (computedWeightKb < 500) efficiency += 5;
       efficiency = Math.min(efficiency, 100);
     }
 
     let testing = 84;
-    if (auditProfile === 'attempt2') {
+    if (auditProfile === 'baseline91') {
       testing = 78;
-    } else if (auditProfile === 'attempt3') {
-      testing = 98;
+    } else if (auditProfile === 'optimized98') {
+      testing = 96;
     } else {
       testing = website.isMinified && website.isCached ? 98 : 84;
     }
 
     let accessibility = 91;
-    if (auditProfile === 'attempt2') {
-      accessibility = 96;
-    } else if (auditProfile === 'attempt3') {
+    if (auditProfile === 'baseline91') {
+      accessibility = 95;
+    } else if (auditProfile === 'optimized98') {
       accessibility = 98;
     } else {
-      accessibility = computedWeightKb < 400 ? 98 : computedWeightKb < 1000 ? 94 : 91; 
+      accessibility = computedWeightKb < 200 ? 98 : computedWeightKb < 600 ? 95 : 91; 
     }
 
     let googleServices = 100;
+    if (auditProfile === 'baseline91') {
+      googleServices = 92;
+    } else if (auditProfile === 'optimized98') {
+      googleServices = 100;
+    } else {
+      googleServices = website.isGreenHost ? 100 : 92;
+    }
+
     let problemStatementAlignment = 98;
-    if (auditProfile === 'attempt3') {
-      problemStatementAlignment = 100;
+    if (auditProfile === 'baseline91') {
+      problemStatementAlignment = 93;
+    } else if (auditProfile === 'optimized98') {
+      problemStatementAlignment = 98;
+    } else {
+      problemStatementAlignment = computedWeightKb < 500 ? 98 : 93;
     }
 
     setMetrics({
@@ -198,9 +210,9 @@ export default function App() {
     setAuditProfile('sandbox');
   };
 
-  const handleProfileChange = (profile: 'sandbox' | 'attempt2' | 'attempt3') => {
+  const handleProfileChange = (profile: 'sandbox' | 'baseline91' | 'optimized98') => {
     setAuditProfile(profile);
-    if (profile === 'attempt2') {
+    if (profile === 'baseline91') {
       setWebsite({
         pageWeightKb: 830,
         monthlyPageViews: 150000,
@@ -210,7 +222,7 @@ export default function App() {
         imageOptimization: 'basic',
         securityHttps: true
       });
-    } else if (profile === 'attempt3') {
+    } else if (profile === 'optimized98') {
       setWebsite({
         pageWeightKb: 140,
         monthlyPageViews: 150000,
