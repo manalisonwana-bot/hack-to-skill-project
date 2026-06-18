@@ -1,0 +1,6 @@
+{
+  "name": "Carbon Footprint Calculator",
+  "description": "A comprehensive carbon footprint calculator for home energy, personal transport, diet, and website digital efficiency audits, featuring diagnostic testing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
