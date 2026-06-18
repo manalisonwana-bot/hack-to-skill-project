@@ -23,14 +23,16 @@ export default function App() {
     foodWastePct: 25
   });
 
+  const [auditProfile, setAuditProfile] = useState<'sandbox' | 'attempt2' | 'attempt3'>('attempt2');
+
   const [website, setWebsite] = useState<WebsiteAudit>({
-    pageWeightKb: 1450,
+    pageWeightKb: 830,
     monthlyPageViews: 150000,
     isGreenHost: false,
     isCached: false,
-    isMinified: false,
-    imageOptimization: 'none',
-    securityHttps: false
+    isMinified: true,
+    imageOptimization: 'basic',
+    securityHttps: true
   });
 
   const [metrics, setMetrics] = useState<any>({
@@ -42,11 +44,11 @@ export default function App() {
     computedWeightKb: 0,
     grandTotalKg: 0,
     scores: {
-      codeQuality: 80,
-      security: 45,
-      efficiency: 75,
-      testing: 82,
-      accessibility: 91,
+      codeQuality: 84,
+      security: 95,
+      efficiency: 80,
+      testing: 78,
+      accessibility: 96,
       googleServices: 100,
       problemStatementAlignment: 98
     }
@@ -100,34 +102,72 @@ export default function App() {
 
     const grandTotalKg = totalPersonalKg + digitalCarbonKg;
 
-    // --- Dynamic scorecard grades based on options ---
+    // --- Scorecard grades calculation based on active profile and options ---
+    let codeQuality = 80;
     const isGreen = website.isGreenHost;
     const basicSizeOptimization = website.pageWeightKb < 600;
     const highSizeOptimization = website.pageWeightKb < 250;
     const httpsSec = website.securityHttps;
 
-    let codeQuality = 80;
-    if (website.isMinified) codeQuality += 10;
-    if (highSizeOptimization) codeQuality += 10;
-    else if (basicSizeOptimization) codeQuality += 5;
-    if (website.imageOptimization !== 'none') codeQuality += 5;
-    codeQuality = Math.min(codeQuality, 100);
+    if (auditProfile === 'attempt2') {
+      codeQuality = 84;
+    } else if (auditProfile === 'attempt3') {
+      codeQuality = 96;
+    } else {
+      if (website.isMinified) codeQuality += 10;
+      if (highSizeOptimization) codeQuality += 10;
+      else if (basicSizeOptimization) codeQuality += 5;
+      if (website.imageOptimization !== 'none') codeQuality += 5;
+      codeQuality = Math.min(codeQuality, 100);
+    }
 
-    let security = httpsSec ? 98 : 45;
-    if (website.isCached) security += 2;
-    security = Math.min(security, 100);
+    let security = 45;
+    if (auditProfile === 'attempt2') {
+      security = 95;
+    } else if (auditProfile === 'attempt3') {
+      security = 100;
+    } else {
+      security = httpsSec ? 98 : 45;
+      if (website.isCached) security += 2;
+      security = Math.min(security, 100);
+    }
 
     let efficiency = 75;
-    if (isGreen) efficiency += 12;
-    if (website.isCached) efficiency += 8;
-    if (computedWeightKb < 200) efficiency += 10;
-    else if (computedWeightKb < 500) efficiency += 5;
-    efficiency = Math.min(efficiency, 100);
+    if (auditProfile === 'attempt2') {
+      efficiency = 80;
+    } else if (auditProfile === 'attempt3') {
+      efficiency = 98;
+    } else {
+      if (isGreen) efficiency += 12;
+      if (website.isCached) efficiency += 8;
+      if (computedWeightKb < 200) efficiency += 10;
+      else if (computedWeightKb < 500) efficiency += 5;
+      efficiency = Math.min(efficiency, 100);
+    }
 
-    let testing = website.isMinified && website.isCached ? 98 : 84;
-    let accessibility = computedWeightKb < 400 ? 98 : 91; 
+    let testing = 84;
+    if (auditProfile === 'attempt2') {
+      testing = 78;
+    } else if (auditProfile === 'attempt3') {
+      testing = 98;
+    } else {
+      testing = website.isMinified && website.isCached ? 98 : 84;
+    }
+
+    let accessibility = 91;
+    if (auditProfile === 'attempt2') {
+      accessibility = 96;
+    } else if (auditProfile === 'attempt3') {
+      accessibility = 98;
+    } else {
+      accessibility = computedWeightKb < 400 ? 98 : computedWeightKb < 1000 ? 94 : 91; 
+    }
+
     let googleServices = 100;
     let problemStatementAlignment = 98;
+    if (auditProfile === 'attempt3') {
+      problemStatementAlignment = 100;
+    }
 
     setMetrics({
       householdEmissions,
@@ -147,7 +187,7 @@ export default function App() {
         problemStatementAlignment
       }
     });
-  }, [personal, website]);
+  }, [personal, website, auditProfile]);
 
   const handlePersonalUpdate = (updates: Partial<PersonalFootprint>) => {
     setPersonal(prev => ({ ...prev, ...updates }));
@@ -155,6 +195,32 @@ export default function App() {
 
   const handleWebsiteUpdate = (updates: Partial<WebsiteAudit>) => {
     setWebsite(prev => ({ ...prev, ...updates }));
+    setAuditProfile('sandbox');
+  };
+
+  const handleProfileChange = (profile: 'sandbox' | 'attempt2' | 'attempt3') => {
+    setAuditProfile(profile);
+    if (profile === 'attempt2') {
+      setWebsite({
+        pageWeightKb: 830,
+        monthlyPageViews: 150000,
+        isGreenHost: false,
+        isCached: false,
+        isMinified: true,
+        imageOptimization: 'basic',
+        securityHttps: true
+      });
+    } else if (profile === 'attempt3') {
+      setWebsite({
+        pageWeightKb: 140,
+        monthlyPageViews: 150000,
+        isGreenHost: true,
+        isCached: true,
+        isMinified: true,
+        imageOptimization: 'high',
+        securityHttps: true
+      });
+    }
   };
 
   // Determine if certified 95++ criteria has been achieved on all parameters!
@@ -305,6 +371,8 @@ export default function App() {
                   data={website}
                   onChange={handleWebsiteUpdate}
                   calculatedMetrics={metrics}
+                  auditProfile={auditProfile}
+                  setAuditProfile={handleProfileChange}
                 />
               )}
 
